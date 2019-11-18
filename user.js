@@ -12,10 +12,10 @@ class User {
     this.walletAddress = this.publicKey
   }
 
-  buyEnergy(amount) {
-    const tx1 = new Transaction(this.walletAddress, '', amount);
-    tx1.signTransaction(this.privateKey);
-    energyCoin.addTransaction(tx1);
+  buyEnergy(blockchain, amount) {
+    const tx1 = new Transaction(this.walletAddress, this.walletAddress, amount);
+    tx1.signTransaction(this.key);
+    blockchain.addTransaction(tx1);
   }
 }
 

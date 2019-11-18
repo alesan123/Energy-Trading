@@ -2,7 +2,7 @@ const EC = require('elliptic').ec;
 const express = require('express');
 const socket = require('socket.io');
 const User = require('./user.js')
-const Blockchain = require('./blockchain.js')
+const {Blockchain, BlockchainInstance} = require('./blockchain.js')
 const fs = require('fs')
 
 //App setup
@@ -34,10 +34,11 @@ io.on('connection' , function(socket){
 
     //Will listen for purchase
     socket.on('purchase', function(data){
-        var energyCoin = JSON.parse(fs.readFileSync('blockchain.json'))
+        var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
+        var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
 
-        users[0].buyEnergy(data.amountEntered)
-        
+        users[0].buyEnergy(energyCoin, data.amountEntered)
+        console.log(energyCoin.getBalanceOfAddress(users[0].walletAddress))
     })
 
 });
