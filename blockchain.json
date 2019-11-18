@@ -1,0 +1,14 @@
+{
+  "chain": [
+    {
+      "timestamp": 1573613912435,
+      "transactions": "Genesis block",
+      "previousHash": "0",
+      "hash": "2b295b2d540b1da4e4d9f10a00b28c467ec439864b3b37da1c41eada9d3a970b",
+      "nonce": 0
+    }
+  ],
+  "difficulty": 2,
+  "pendingTransactions": [],
+  "miningReward": 100
+}
