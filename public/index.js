@@ -11,7 +11,7 @@ logInButton = document.getElementById('logInButton')
 
  logInButton.addEventListener('click', function(){
 
-     socket.emit("logIn", {
+     socket.emit("login", {
          username: username.value,
          password: password.value
      });

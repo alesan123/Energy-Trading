@@ -12,8 +12,8 @@ class User {
     this.walletAddress = this.publicKey
   }
 
-  buyEnergy(blockchain, amount) {
-    const tx1 = new Transaction(this.walletAddress, this.walletAddress, amount);
+  transferToken(blockchain, amount, walletAddress) {
+    const tx1 = new Transaction(this.walletAddress, walletAddress, amount);
     tx1.signTransaction(this.key);
     blockchain.addTransaction(tx1);
   }
