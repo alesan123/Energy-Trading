@@ -34,19 +34,19 @@ io.on('connection' , function(socket){
         console.log('User is now in array')
     })
 
-    //Will listen for purchase
+    //Will listen for purchase call
     socket.on('purchase', function(data){
+        //Parse json file
         var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
         var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
-
-        //Will transfer tokens from user to admin pool
-        users[0].transferToken(energyCoin, data.amountEntered, admin.walletAddress)
+        
+        //Will transfer tokens from admin pool to user
+        admin.transferToken(energyCoin, data.amountEntered, users[0].walletAddress)
         energyCoin.minePendingTransactions(admin.walletAddress)
         console.log(energyCoin)
-        console.log(energyCoin.getBalanceOfAddress(users[0].walletAddress))
+        console.log("the balance of user is ", energyCoin.getBalanceOfAddress(users[0].walletAddress))
         //Will save blockchain object to JSON file
         fs.writeFileSync('blockchain.json', JSON.stringify(energyCoin))
-
     })
 
     //Will listen for sell
@@ -58,7 +58,7 @@ io.on('connection' , function(socket){
         admin.transferToken(energyCoin, data.amountEntered, users[0].walletAddress)
         energyCoin.minePendingTransactions(admin.walletAddress)
         console.log(energyCoin)
-        console.log(energyCoin.getBalanceOfAddress(users[0].walletAddress))
+        console.log("The balance of user is ", energyCoin.getBalanceOfAddress(users[0].walletAddress))
         //Will save blockchain object to JSON file
         fs.writeFileSync('blockchain.json', JSON.stringify(energyCoin))
 
