@@ -187,16 +187,16 @@ class BlockchainInstance {
     for (const block of this.chain) {
       for (const trans of block.transactions) {
         if (trans.fromAddress === address) {
-          balance -= parseInt(trans.amount);
+          balance -= parseFloat(trans.amount);
         }
 
         if (trans.toAddress === address) {
-          balance += parseInt(trans.amount);
+          balance += parseFloat(trans.amount);
         }
       }
     }
 
-    return parseInt(balance);
+    return parseFloat(balance);
   }
 
   isValid() {

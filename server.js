@@ -17,10 +17,10 @@ app.use(express.static('public'));
 //Socket set up
 var io = socket(server);
 
-
 //Setup Users
 let users = []
 let admin = new User('Admin', 'Admin')
+
 
 //Listening for event
 io.on('connection' , function(socket){
@@ -34,14 +34,19 @@ io.on('connection' , function(socket){
         console.log('User is now in array')
     })
 
-    //Will listen for purchase call
+    //Will listen for purchase
     socket.on('purchase', function(data){
-        //Parse json file
+        //Convert energy entered to tokens
+        users[0].energyAmount += parseFloat(data.amountEntered)
+        tokens = parseFloat(data.amountEntered / 100)
+
+        //Will read blockchain from JSON file
         var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
         var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
         
-        //Will transfer tokens from admin pool to user
-        admin.transferToken(energyCoin, data.amountEntered, users[0].walletAddress)
+        //Will transfer tokens from user to admin pool
+        //admin.transferToken(energyCoin, tokens, users[0].walletAddress)
+        users[0].transferToken(energyCoin, tokens, admin.walletAddress)
         energyCoin.minePendingTransactions(admin.walletAddress)
         console.log(energyCoin)
         console.log("the balance of user is ", energyCoin.getBalanceOfAddress(users[0].walletAddress))
@@ -51,17 +56,32 @@ io.on('connection' , function(socket){
 
     //Will listen for sell
     socket.on('sell', function(data){
+        users[0].energyAmount -= parseFloat(data.amountEntered)
+        tokens = parseFloat(data.amountEntered / 100)
+
+        //Will read blockchain from JSON file
         var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
         var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
         
         //Will trasnfer tokens from admin pool to user
-        admin.transferToken(energyCoin, data.amountEntered, users[0].walletAddress)
+        admin.transferToken(energyCoin, tokens, users[0].walletAddress)
         energyCoin.minePendingTransactions(admin.walletAddress)
         console.log(energyCoin)
         console.log("The balance of user is ", energyCoin.getBalanceOfAddress(users[0].walletAddress))
         //Will save blockchain object to JSON file
         fs.writeFileSync('blockchain.json', JSON.stringify(energyCoin))
-
     })
+
+    //Will wait for user to be created
+    if(users[0] != undefined){
+        var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
+        var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
+        //Will send data to the client
+        socket.emit('init',{
+            username : users[0].username,
+            energyAmount : users[0].energyAmount,
+            tokenAmount : energyCoin.getBalanceOfAddress(users[0].walletAddress)
+    })}
+
 
 });

@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Home</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 </head>
 <body>
-    <h1>Welcome to AR Energy trading</h1>
-    <p>Please select wether to buy or sell</p>
+    <script src = 'home.js'></script>
+    <h1>AR Energy trading</h1>
+    <p> Welcome <span id ="username"></span></p>
+    <p>Your available energy amount: <span id = "energyAmount"></span> kWh</p>
+    <p>Your token amount: <span id = "tokenAmount"></span> AR Tokens</p>
+    <p>To purchase energy:</p>
     <a href="purchase.html">
-        <button>Purchase</button>
+        <button>Go to purchase</button>
     </a>
+    <p>To sell energy:</p>
     <a href="sell.html">
-        <button>Sell</button>
+        <button>Go to Sell</button>
     </a>
 </body>
 </html>
