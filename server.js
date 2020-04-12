@@ -7,7 +7,7 @@ const fs = require('fs')
 
 //App setup
 var app = express();
-var server = app.listen(8080, function(){
+var server = app.listen(8080, function() {
     console.log(' listening on port 8080');
 })
 
@@ -21,6 +21,15 @@ var io = socket(server);
 let users = []
 let admin = new User('Admin', 'Admin')
 
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+const doSomething = async () => {
+    await sleep(1000).then(() => {
+        users[0].updateEnergyAmount()
+    })
+}
 
 //Listening for event
 io.on('connection' , function(socket){
@@ -76,11 +85,13 @@ io.on('connection' , function(socket){
     if(users[0] != undefined){
         var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
         var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
+
         //Will send data to the client
         socket.emit('init',{
             username : users[0].username,
             energyAmount : users[0].energyAmount,
-            tokenAmount : energyCoin.getBalanceOfAddress(users[0].walletAddress)
+            tokenAmount : energyCoin.getBalanceOfAddress(users[0].walletAddress),
+            transferStatus : users[0].transferStatus
     })}
 
 

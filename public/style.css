@@ -1,0 +1,35 @@
+.form-control {
+    margin-bottom: 20px;
+}
+
+.jumbotron {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: transparent;
+}
+
+.jumbotron-blue {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: #324a5e;
+    border-radius: 40px;
+}
+
+.h4 {
+    margin-bottom: 25px;
+}
+
+.btn {
+    background-color: #324a5e;
+}
+
+.btn-primary {
+    align-self: center;
+    font-size: x-large;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 50px;
+}
+
