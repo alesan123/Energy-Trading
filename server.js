@@ -4,6 +4,14 @@ const socket = require('socket.io');
 const User = require('./user.js')
 const {Blockchain, BlockchainInstance} = require('./blockchain.js')
 const fs = require('fs')
+const Client = require('azure-iothub').Client;
+const Message = require('azure-iot-common').Message
+
+// IoT Hub setup
+var connectionString = 'HostName=speakeasy-iot-hub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=Sc/aHK6H1LTtn/zRcfkEIm0NzQtURh3GnCfrvPowPfA='
+var targetDevice = 'raspberrypi'
+
+var serviceClient = Client.fromConnectionString(connectionString)
 
 //App setup
 var app = express();
@@ -21,14 +29,33 @@ var io = socket(server);
 let users = []
 let admin = new User('Admin', 'Admin')
 
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
+// functions for communicating with the device
+function transferEnergy() {
+    serviceClient.open(function (err) {
+        if (err) {
+          console.error('Could not connect: ' + err.message);
+        } else {
+          console.log('Service client connected');
+          var message = new Message("1");
+          message.ack = 'full';
+          console.log('Sending message: ' + message.getData());
+          serviceClient.send(targetDevice, message);
+        }
+    });
 }
 
-const doSomething = async () => {
-    await sleep(1000).then(() => {
-        users[0].updateEnergyAmount()
-    })
+function stopTransferEnergy() {
+    serviceClient.open(function (err) {
+        if (err) {
+          console.error('Could not connect: ' + err.message);
+        } else {
+          console.log('Service client connected');
+          var message = new Message("-1")
+          message.ack = 'full';
+          console.log('Sending message: ' + message.getData());
+          serviceClient.send(targetDevice, message);
+        }
+    });
 }
 
 //Listening for event
@@ -81,11 +108,28 @@ io.on('connection' , function(socket){
         fs.writeFileSync('blockchain.json', JSON.stringify(energyCoin))
     })
 
+    socket.on("transfer", function(data) {
+        users[0].transferStatus = data.transferStatus
+
+        if (users[0].transferStatus == true) {
+            console.log("transferring")
+            transferEnergy()
+        } else {
+            console.log("stopping")
+            stopTransferEnergy()
+        }
+    })
+
+    socket.on("updateEnergyAmount", function(data){
+        users[0].energyAmount = data.newEnergyAmount
+        console.log("sdklasdjflkasdjflkasjlkdf")
+    })
+
     //Will wait for user to be created
     if(users[0] != undefined){
         var energyCoinJSON = JSON.parse(fs.readFileSync('blockchain.json'))
         var energyCoin = new BlockchainInstance(energyCoinJSON.chain, energyCoinJSON.pendingTransactions)
-
+        
         //Will send data to the client
         socket.emit('init',{
             username : users[0].username,
@@ -93,6 +137,4 @@ io.on('connection' , function(socket){
             tokenAmount : energyCoin.getBalanceOfAddress(users[0].walletAddress),
             transferStatus : users[0].transferStatus
     })}
-
-
 });

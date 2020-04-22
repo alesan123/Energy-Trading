@@ -10,7 +10,7 @@ class User {
     this.privateKey = this.key.getPrivate('hex')
     this.publicKey = this.key.getPublic('hex')
     this.walletAddress = this.publicKey
-    this.energyAmount = 1000;
+    this.energyAmount = 100;
     this.transferStatus = ((this.energyAmount > 0) ? true : false);
   }
 
